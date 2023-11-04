@@ -34,8 +34,8 @@ app = FastAPI()
 @app.post("/process/")
 async def process(
     image_file: UploadFile = File(...),
-    text: str = Form(...),
-    model_path: str = Form("facebook/opt-350m"),
+    text: str = Form("What is in this iamge?"),
+    model_path: str = Form("liuhaotian/llava-v1.5-7b"),
     model_base: Optional[str] = Form(None),
     temperature: float = Form(0.2),
     max_new_tokens: int = Form(512),
@@ -54,27 +54,8 @@ async def process(
         model_path, model_base, model_name, load_8bit, load_4bit, device=device
     )
 
-    # ... rest of your existing logic ...
-
-    if "llama-2" in model_name.lower():
-        conv_mode = "llava_llama_2"
-    elif "v1" in model_name.lower():
-        conv_mode = "llava_v1"
-    elif "mpt" in model_name.lower():
-        conv_mode = "mpt"
-    else:
-        conv_mode = "llava_v0"
-
-    if args.conv_mode is not None and conv_mode != args.conv_mode:
-        print(
-            "[WARNING] the auto inferred conversation mode is {}, while `--conv-mode` is {}, using {}".format(
-                conv_mode, args.conv_mode, args.conv_mode
-            )
-        )
-    else:
-        args.conv_mode = conv_mode
-
-    conv = conv_templates[args.conv_mode].copy()
+    conv_mode = "llava_v1"
+    conv = conv_templates[conv_mode].copy()
     if "mpt" in model_name.lower():
         roles = ("user", "assistant")
     else:
