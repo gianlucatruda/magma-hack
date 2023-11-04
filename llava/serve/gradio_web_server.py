@@ -239,7 +239,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
     state.messages[-1][-1] = "▌"
     yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
 
-    if not hasattr(self, "image_text"):
+    if not hasattr(state, "image_text"):
         try:
             # Stream output
             response = requests.post(worker_addr + "/worker_generate_stream",
