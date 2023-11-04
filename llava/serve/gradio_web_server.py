@@ -249,23 +249,28 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
                 data = json.loads(chunk.decode())
                 if data["error_code"] == 0:
                     output = data["text"][len(prompt):].strip()
-                    state.messages[-1][-1] = output + "▌"
+                    state.image_text = output
                     #yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
                 else:
                     output = data["text"] + f" (error_code: {data['error_code']})"
-                    state.messages[-1][-1] = output
+                    state.image_text = output
                     #yield (state, state.to_gradio_chatbot()) + (disable_btn, disable_btn, disable_btn, enable_btn, enable_btn)
-                    return
-                time.sleep(0.03)
+                    # return
+                # time.sleep(0.03)
 
     except requests.exceptions.RequestException as e:
-        state.messages[-1][-1] = server_error_msg
+        print("RequestException", e)
+        # state.messages[-1][-1] = server_error_msg
         #yield (state, state.to_gradio_chatbot()) + (disable_btn, disable_btn, disable_btn, enable_btn, enable_btn)
-        return
+        # return
+
+    # TOM, I think you want to make the Claude call here and update state before you let it yield
+    state.messages[-1][-1] = ""
+    for token in state.claude_response():
+        state.messages[-1][-1] += token + "▌"
+        yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
 
     state.messages[-1][-1] = state.messages[-1][-1][:-1]
-    # TOM, I think you want to make the Claude call here and update state before you let it yield
-
     yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
 
     finish_tstamp = time.time()
@@ -371,7 +376,7 @@ def build_demo(embed_mode):
         url_params = gr.JSON(visible=False)
 
         # Register listeners
-       
+
         # btn_list = [upvote_btn, downvote_btn, flag_btn, regenerate_btn, clear_btn]
         btn_list = [clear_btn]
 

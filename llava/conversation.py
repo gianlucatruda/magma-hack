@@ -1,8 +1,10 @@
 import dataclasses
 from enum import auto, Enum
 from typing import List, Tuple
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 LLAVA_PROMPT = "Describe the medical condition shown in this image. List the three most likely conditions and explain why."
+CLAUDE_SYSTEM_PROMPT = "You are a helpful and harmless dermatologist assistant."
 
 class SeparatorStyle(Enum):
     """Different separator style."""
@@ -156,6 +158,34 @@ class Conversation:
                         img_b64_str = base64.b64encode(buffered.getvalue()).decode()
                         images.append(img_b64_str)
         return images
+
+    async def claude_response(self):
+        for token in Anthropic().completions.create(
+            model="claude-2",
+            max_tokens_to_sample=500,
+            prompt=self.to_claude_prompt(),
+            stream=True,
+        ):
+            yield token
+
+    def to_claude_prompt(self):
+        chat = f"<system>\n{CLAUDE_SYSTEM_PROMPT}</system>"
+
+        if hasattr(self, "image_text"):
+            chat.append(f"<image>\n{self.image_text}\n</image>")
+
+        for role, message in self.messages:
+            if message:
+                if type(message) is tuple:
+                    message, _, _ = message
+
+                if role == "USER":
+                    chat += f"{HUMAN_PROMPT} {message}"
+
+                elif role == "ASSISTANT":
+                    chat += f"{AI_PROMPT} {message}"
+
+        return chat
 
     def to_gradio_chatbot(self):
         ret = []
@@ -378,4 +408,4 @@ conv_templates = {
 
 
 if __name__ == "__main__":
-    print(default_conversation.get_prompt())
+    print(conv_llava_v1_mmtag.get_prompt())
