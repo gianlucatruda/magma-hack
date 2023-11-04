@@ -159,7 +159,7 @@ class Conversation:
                         images.append(img_b64_str)
         return images
 
-    async def claude_response(self):
+    def claude_response(self):
         for token in Anthropic().completions.create(
             model="claude-2",
             max_tokens_to_sample=500,
@@ -172,7 +172,7 @@ class Conversation:
         chat = f"<system>\n{CLAUDE_SYSTEM_PROMPT}</system>"
 
         if hasattr(self, "image_text"):
-            chat.append(f"<image>\n{self.image_text}\n</image>")
+            chat += f"<image>\n{self.image_text}\n</image>"
 
         for role, message in self.messages:
             if message:
