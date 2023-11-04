@@ -306,22 +306,16 @@ block_css = """
 """
 
 def build_demo(embed_mode):
-    textbox = gr.Textbox(show_label=False, placeholder="Enter text and press ENTER", container=False)
-    with gr.Blocks(title="LLaVA", theme=gr.themes.Default(), css=block_css) as demo:
+    textbox = gr.Textbox(show_label=False, placeholder="Upload your image and press ENTER", container=False)
+    with gr.Blocks(title="Magma", theme=gr.themes.Default(), css=block_css) as demo:
         state = gr.State()
 
         if not embed_mode:
-            gr.Markdown(title_markdown)
+            pass
+            # gr.Markdown(title_markdown)
 
         with gr.Row():
             with gr.Column(scale=3):
-                with gr.Row(elem_id="model_selector_row"):
-                    model_selector = gr.Dropdown(
-                        choices=models,
-                        value=models[0] if len(models) > 0 else "",
-                        interactive=True,
-                        show_label=False,
-                        container=False)
 
                 imagebox = gr.Image(type="pil")
                 image_process_mode = gr.Radio(
@@ -330,11 +324,20 @@ def build_demo(embed_mode):
                     label="Preprocess for non-square image", visible=False)
 
                 cur_dir = os.path.dirname(os.path.abspath(__file__))
+                """
                 gr.Examples(examples=[
                     [f"{cur_dir}/examples/extreme_ironing.jpg", "What is unusual about this image?"],
                     [f"{cur_dir}/examples/waterview.jpg", "What are the things I should be cautious about when I visit here?"],
                 ], inputs=[imagebox, textbox])
+                """
 
+                with gr.Row(elem_id="model_selector_row"):
+                    model_selector = gr.Dropdown(
+                        choices=models,
+                        value=models[0] if len(models) > 0 else "",
+                        interactive=True,
+                        show_label=False,
+                        container=False)
                 with gr.Accordion("Parameters", open=False) as parameter_row:
                     temperature = gr.Slider(minimum=0.0, maximum=1.0, value=0.2, step=0.1, interactive=True, label="Temperature",)
                     top_p = gr.Slider(minimum=0.0, maximum=1.0, value=0.7, step=0.1, interactive=True, label="Top P",)
@@ -348,49 +351,23 @@ def build_demo(embed_mode):
                     with gr.Column(scale=1, min_width=50):
                         submit_btn = gr.Button(value="Send", variant="primary")
                 with gr.Row(elem_id="buttons") as button_row:
-                    upvote_btn = gr.Button(value="👍  Upvote", interactive=False)
-                    downvote_btn = gr.Button(value="👎  Downvote", interactive=False)
-                    flag_btn = gr.Button(value="⚠️  Flag", interactive=False)
+                    # upvote_btn = gr.Button(value="👍  Upvote", interactive=False)
+                    # downvote_btn = gr.Button(value="👎  Downvote", interactive=False)
+                    # flag_btn = gr.Button(value="⚠️  Flag", interactive=False)
                     #stop_btn = gr.Button(value="⏹️  Stop Generation", interactive=False)
-                    regenerate_btn = gr.Button(value="🔄  Regenerate", interactive=False)
+                    # regenerate_btn = gr.Button(value="🔄  Regenerate", interactive=False)
                     clear_btn = gr.Button(value="🗑️  Clear", interactive=False)
 
         if not embed_mode:
-            gr.Markdown(tos_markdown)
-            gr.Markdown(learn_more_markdown)
+            pass
+            # gr.Markdown(tos_markdown)
+            # gr.Markdown(learn_more_markdown)
         url_params = gr.JSON(visible=False)
 
         # Register listeners
-        btn_list = [upvote_btn, downvote_btn, flag_btn, regenerate_btn, clear_btn]
-        upvote_btn.click(
-            upvote_last_response,
-            [state, model_selector],
-            [textbox, upvote_btn, downvote_btn, flag_btn],
-            queue=False
-        )
-        downvote_btn.click(
-            downvote_last_response,
-            [state, model_selector],
-            [textbox, upvote_btn, downvote_btn, flag_btn],
-            queue=False
-        )
-        flag_btn.click(
-            flag_last_response,
-            [state, model_selector],
-            [textbox, upvote_btn, downvote_btn, flag_btn],
-            queue=False
-        )
-
-        regenerate_btn.click(
-            regenerate,
-            [state, image_process_mode],
-            [state, chatbot, textbox, imagebox] + btn_list,
-            queue=False
-        ).then(
-            http_bot,
-            [state, model_selector, temperature, top_p, max_output_tokens],
-            [state, chatbot] + btn_list
-        )
+       
+        # btn_list = [upvote_btn, downvote_btn, flag_btn, regenerate_btn, clear_btn]
+        btn_list = [clear_btn]
 
         clear_btn.click(
             clear_history,
