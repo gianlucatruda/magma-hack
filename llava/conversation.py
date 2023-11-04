@@ -185,7 +185,7 @@ class Conversation:
                 elif role == "ASSISTANT":
                     chat += f"{AI_PROMPT} {message}"
 
-        return chat
+        return chat + AI_PROMPT + " "
 
     def to_gradio_chatbot(self):
         ret = []
