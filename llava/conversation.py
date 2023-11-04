@@ -160,13 +160,13 @@ class Conversation:
         return images
 
     def claude_response(self):
-        for token in Anthropic().completions.create(
+        for completion in Anthropic().completions.create(
             model="claude-2",
             max_tokens_to_sample=500,
             prompt=self.to_claude_prompt(),
             stream=True,
         ):
-            yield token
+            yield completion.completion
 
     def to_claude_prompt(self):
         chat = f"<system>\n{CLAUDE_SYSTEM_PROMPT}</system>"
