@@ -267,7 +267,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
     # TOM, I think you want to make the Claude call here and update state before you let it yield
     state.messages[-1][-1] = "▌"
     for token in state.claude_response():
-        state.messages[-1][-1][:-1] += token + "▌"
+        state.messages[-1][-1] = state.messages[-1][-1][:-1] + token + "▌"
         yield (state, state.to_gradio_chatbot()) + (disable_btn,) * 5
 
     state.messages[-1][-1] = state.messages[-1][-1][:-1]
