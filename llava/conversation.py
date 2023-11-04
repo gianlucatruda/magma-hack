@@ -172,7 +172,7 @@ class Conversation:
         chat = f"<system>\n{CLAUDE_SYSTEM_PROMPT}</system>"
 
         if hasattr(self, "image_text"):
-            chat += f"<image>\n{self.image_text}\n</image>"
+            chat += f"\n<image>\n{self.image_text}\n</image>"
 
         for role, message in self.messages:
             if message:
