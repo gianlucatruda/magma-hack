@@ -1,8 +1,11 @@
 import dataclasses
 from enum import auto, Enum
 from typing import List, Tuple
+from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 
 LLAVA_PROMPT = """You are a medical student. Answer the following question in-character for a smart, highly accurate medical student who thinks about their answers carefully before responding. Since you're not talking to a patient, but to the doctor examining you, you do not need to include lengthy disclaimers about the need to consult doctors; the doctor knows this. You are given a single image of the patient. Describe the contents of the image in detail, describing the appearance of the patient and any abnormalities they are exhibiting. Describe the appearance of any skin abnormalities in precise medical terms. Mention the colour, severity, and location in detail. Only describe what you see in the image. Do not extrapolate further than what you see. Always use precise medical terminology. Begin by listing exactly what you observe and where it is located on the body. Then end by listing three medical conditions that best fit what you see in the picture."""
+
+CLAUDE_SYSTEM_PROMPT = "You are a helpful and harmless dermatologist assistant."
 
 class SeparatorStyle(Enum):
     """Different separator style."""
@@ -156,6 +159,34 @@ class Conversation:
                         img_b64_str = base64.b64encode(buffered.getvalue()).decode()
                         images.append(img_b64_str)
         return images
+
+    def claude_response(self):
+        for completion in Anthropic().completions.create(
+            model="claude-2",
+            max_tokens_to_sample=500,
+            prompt=self.to_claude_prompt(),
+            stream=True,
+        ):
+            yield completion.completion
+
+    def to_claude_prompt(self):
+        chat = f"<system>\n{CLAUDE_SYSTEM_PROMPT}</system>"
+
+        if hasattr(self, "image_text"):
+            chat += f"\n<image>\n{self.image_text}\n</image>"
+
+        for role, message in self.messages:
+            if message:
+                if type(message) is tuple:
+                    message, _, _ = message
+
+                if role == "USER":
+                    chat += f"{HUMAN_PROMPT} {message}"
+
+                elif role == "ASSISTANT":
+                    chat += f"{AI_PROMPT} {message}"
+
+        return chat + AI_PROMPT + " "
 
     def to_gradio_chatbot(self):
         ret = []
@@ -378,4 +409,4 @@ conv_templates = {
 
 
 if __name__ == "__main__":
-    print(default_conversation.get_prompt())
+    print(conv_llava_v1_mmtag.get_prompt())
