@@ -131,12 +131,14 @@ def add_text(state, text, image, image_process_mode, request: gr.Request):
     if len(text) <= 0 and image is None:
         state.skip_next = True
         return (state, state.to_gradio_chatbot(), "", None) + (no_change_btn,) * 5
+    """
     if args.moderate:
         flagged = violates_moderation(text)
         if flagged:
             state.skip_next = True
             return (state, state.to_gradio_chatbot(), moderation_msg, None) + (
                 no_change_btn,) * 5
+    """
 
     text = text[:1536]  # Hard cut-off
     if image is not None:
@@ -344,7 +346,7 @@ def build_demo(embed_mode):
                     max_output_tokens = gr.Slider(minimum=0, maximum=1024, value=512, step=64, interactive=True, label="Max output tokens",)
 
             with gr.Column(scale=8):
-                chatbot = gr.Chatbot(elem_id="chatbot", label="LLaVA Chatbot", height=550)
+                chatbot = gr.Chatbot(elem_id="chatbot", label="Chat", height=550)
                 with gr.Row():
                     with gr.Column(scale=8):
                         textbox.render()

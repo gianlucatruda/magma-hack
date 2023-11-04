@@ -2,6 +2,7 @@ import dataclasses
 from enum import auto, Enum
 from typing import List, Tuple
 
+LLAVA_PROMPT = "Describe the medical condition shown in this image. List the three most likely conditions and explain why."
 
 class SeparatorStyle(Enum):
     """Different separator style."""
@@ -333,8 +334,7 @@ conv_llava_v0_mmtag = Conversation(
 )
 
 conv_llava_v1 = Conversation(
-    system="A chat between a curious human and an artificial intelligence assistant. "
-           "The assistant gives helpful, detailed, and polite answers to the human's questions.",
+    system=LLAVA_PROMPT,
     roles=("USER", "ASSISTANT"),
     version="v1",
     messages=(),
