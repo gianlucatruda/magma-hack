@@ -254,6 +254,7 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
                     else:
                         output = data["text"] + f" (error_code: {data['error_code']})"
                         state.image_text = output
+            logger.info(f"{output}")
 
         except requests.exceptions.RequestException as e:
             print("RequestException", e)
@@ -268,7 +269,6 @@ def http_bot(state, model_selector, temperature, top_p, max_new_tokens, request:
     yield (state, state.to_gradio_chatbot()) + (enable_btn,) * 5
 
     finish_tstamp = time.time()
-    logger.info(f"{output}")
 
     with open(get_conv_log_filename(), "a") as fout:
         data = {
