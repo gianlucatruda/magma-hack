@@ -1,4 +1,6 @@
-# Magma: LLaVA + Claude for a multimodal health assistant
+# PorePatrol: LLaVA + Claude for a multimodal health assistant
+
+A demo made for the Anthropic hackathon in London, November 2023
 
 <img width="1000" alt="SCR-20231105-kazc" src="https://github.com/gianlucatruda/magma-hack/assets/1952799/9f3d2591-eafb-482a-adbc-3995fbc8c980">
 
