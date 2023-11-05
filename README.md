@@ -1,6 +1,7 @@
 # Magma: LLaVA + Claude for a multimodal health assistant
 
-<img width="1000" alt="SCR-20231104-tmuy" src="https://github.com/gianlucatruda/magma-hack/assets/1952799/0c464523-a009-4090-9cd4-c2575dfb6b8b">
+<img width="1000" alt="SCR-20231105-kazc" src="https://github.com/gianlucatruda/magma-hack/assets/1952799/9f3d2591-eafb-482a-adbc-3995fbc8c980">
+
 
 ## Install
 
